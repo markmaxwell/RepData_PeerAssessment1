@@ -7,6 +7,10 @@ Reproducible Research Peer Assessment 1
 activity <- read.csv(unz("activity.zip", "activity.csv"), header = TRUE)
 #Convert the "date" variable structure from factor to date.
 activity$date <- as.Date(activity$date,format="%Y-%m-%d")
+library(plyr)
+steps.per.day <- ddply(activity, .(date), function(df) sum(df$steps))
+# Rename second column name
+colnames(steps.per.day)[2] <- "steps"
 ```
 
 
@@ -14,16 +18,7 @@ activity$date <- as.Date(activity$date,format="%Y-%m-%d")
 Histogram of the total number of steps taken each day.
 ```{r,echo=TRUE,fig.height=6,fig.width=8}
 library(ggplot2)
-qplot(data=activity, date, steps, stat='summary', fun.y='sum',geom="histogram", xlab="Datetime",ylab="Total Steps")
-```
-
-
-Calculate the sum of steps taken per day and create new aggregated dataframe
-```{r,echo=TRUE}
-library(plyr)
-steps.per.day <- ddply(activity, .(date), function(df) sum(df$steps,na.rm=TRUE))
-# Rename second column name
-colnames(steps.per.day)[2] <- "steps"
+qplot(steps, data = steps.per.day, xlab = "Datetime", ylab = "Total Steps",binwidth = 2000,main="Histogram of Total Steps by Day") + geom_histogram(binwidth = 2000,fill = "firebrick", color = "steelblue")
 ```
 
 
@@ -47,12 +42,8 @@ qplot(data=activity, interval, steps, stat='summary', fun.y='mean',geom="line", 
 
 5-minute interval with the max number of steps across all the averages
 ```{r,echo=TRUE}
-# Calculate the mean of steps taken per day and create new aggregated dataframe
-mean.steps.per.day <- ddply(activity, .(date), function(df) mean(df$steps,na.rm=TRUE))
-# Rename second column name
-colnames(mean.steps.per.day)[2] <- "steps"
-# Return the 5-minute interval with the max number of steps across all the averages
-activity[max(mean.steps.per.day$steps,na.rm=TRUE),]$interval
+max.interval <- ddply(activity, .(date,interval), function(df) mean(df$steps,na.rm=TRUE))
+max(max.interval$V1,na.rm=TRUE)
 ```
 
 
@@ -80,7 +71,11 @@ for (i in seq_along(activity$steps)){
 
 Histogram of the total number of steps taken each day after NAs were filled.
 ```{r,echo=TRUE,fig.height=6,fig.width=8}
-qplot(date, steps, data=activity, stat='summary', fun.y='sum',geom="histogram", xlab="Datetime",ylab="Total Steps")
+# Calculate mean steps per day
+steps.per.day <- ddply(activity, .(date), function(df) sum(df$steps))
+# Rename second column name
+colnames(steps.per.day)[2] <- "steps"
+qplot(steps, data = steps.per.day, xlab = "Datetime", ylab = "Total Steps",binwidth = 2000,main="Histogram of Total Steps by Day") + geom_histogram(binwidth = 2000,fill = "steelblue", color = "firebrick")
 ```
 
 

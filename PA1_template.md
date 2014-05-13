@@ -8,6 +8,10 @@ Reproducible Research Peer Assessment 1
 activity <- read.csv(unz("activity.zip", "activity.csv"), header = TRUE)
 # Convert the 'date' variable structure from factor to date.
 activity$date <- as.Date(activity$date, format = "%Y-%m-%d")
+library(plyr)
+steps.per.day <- ddply(activity, .(date), function(df) sum(df$steps))
+# Rename second column name
+colnames(steps.per.day)[2] <- "steps"
 ```
 
 
@@ -17,26 +21,12 @@ Histogram of the total number of steps taken each day.
 
 ```r
 library(ggplot2)
-qplot(data = activity, date, steps, stat = "summary", fun.y = "sum", geom = "histogram", 
-    xlab = "Datetime", ylab = "Total Steps")
-```
-
-```
-## Warning: Removed 2304 rows containing missing values (stat_summary).
+qplot(steps, data = steps.per.day, xlab = "Datetime", ylab = "Total Steps", 
+    binwidth = 2000, main = "Histogram of Total Steps by Day") + geom_histogram(binwidth = 2000, 
+    fill = "firebrick", color = "steelblue")
 ```
 
 ![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2.png) 
-
-
-
-Calculate the sum of steps taken per day and create new aggregated dataframe
-
-```r
-library(plyr)
-steps.per.day <- ddply(activity, .(date), function(df) sum(df$steps, na.rm = TRUE))
-# Rename second column name
-colnames(steps.per.day)[2] <- "steps"
-```
 
 
 
@@ -47,7 +37,7 @@ mean(steps.per.day$steps, na.rm = TRUE)
 ```
 
 ```
-## [1] 9354
+## [1] 10766
 ```
 
 
@@ -59,7 +49,7 @@ median(steps.per.day$steps, na.rm = TRUE)
 ```
 
 ```
-## [1] 10395
+## [1] 10765
 ```
 
 
@@ -75,25 +65,20 @@ qplot(data = activity, interval, steps, stat = "summary", fun.y = "mean", geom =
 ## Warning: Removed 2304 rows containing missing values (stat_summary).
 ```
 
-![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6.png) 
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
 
 
 
 5-minute interval with the max number of steps across all the averages
 
 ```r
-# Calculate the mean of steps taken per day and create new aggregated
-# dataframe
-mean.steps.per.day <- ddply(activity, .(date), function(df) mean(df$steps, na.rm = TRUE))
-# Rename second column name
-colnames(mean.steps.per.day)[2] <- "steps"
-# Return the 5-minute interval with the max number of steps across all the
-# averages
-activity[max(mean.steps.per.day$steps, na.rm = TRUE), ]$interval
+max.interval <- ddply(activity, .(date, interval), function(df) mean(df$steps, 
+    na.rm = TRUE))
+max(max.interval$V1, na.rm = TRUE)
 ```
 
 ```
-## [1] 600
+## [1] 806
 ```
 
 
@@ -132,11 +117,16 @@ for (i in seq_along(activity$steps)) {
 Histogram of the total number of steps taken each day after NAs were filled.
 
 ```r
-qplot(date, steps, data = activity, stat = "summary", fun.y = "sum", geom = "histogram", 
-    xlab = "Datetime", ylab = "Total Steps")
+# Calculate mean steps per day
+steps.per.day <- ddply(activity, .(date), function(df) sum(df$steps))
+# Rename second column name
+colnames(steps.per.day)[2] <- "steps"
+qplot(steps, data = steps.per.day, xlab = "Datetime", ylab = "Total Steps", 
+    binwidth = 2000, main = "Histogram of Total Steps by Day") + geom_histogram(binwidth = 2000, 
+    fill = "steelblue", color = "firebrick")
 ```
 
-![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10.png) 
+![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9.png) 
 
 
 
@@ -192,5 +182,5 @@ qplot(data = activity, interval, steps, stat = "summary", fun.y = "mean", geom =
     xlab = "Interval", ylab = "Mean Steps") + facet_grid(week ~ .) + aes(colour = factor(week))
 ```
 
-![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15.png) 
+![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14.png) 
 

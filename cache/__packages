@@ -1,10 +1,4 @@
 base
-datasets
 ggplot2
-graphics
-grDevices
 knitr
-methods
 plyr
-stats
-utils
