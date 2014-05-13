@@ -82,11 +82,18 @@ qplot(data = activity, interval, steps, stat = "summary", fun.y = "mean", geom =
 5-minute interval with the max number of steps across all the averages
 
 ```r
+# Calculate the mean of steps taken per day and create new aggregated
+# dataframe
+mean.steps.per.day <- ddply(activity, .(date), function(df) mean(df$steps, na.rm = TRUE))
+# Rename second column name
+colnames(mean.steps.per.day)[2] <- "steps"
+# Return the 5-minute interval with the max number of steps across all the
+# averages
 activity[max(mean.steps.per.day$steps, na.rm = TRUE), ]$interval
 ```
 
 ```
-## Error: object 'mean.steps.per.day' not found
+## [1] 600
 ```
 
 

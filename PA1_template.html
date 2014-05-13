@@ -241,10 +241,17 @@ colnames(steps.per.day)[2] &lt;- &quot;steps&quot;
 
 <p>5-minute interval with the max number of steps across all the averages</p>
 
-<pre><code class="r">activity[max(mean.steps.per.day$steps, na.rm = TRUE), ]$interval
+<pre><code class="r"># Calculate the mean of steps taken per day and create new aggregated
+# dataframe
+mean.steps.per.day &lt;- ddply(activity, .(date), function(df) mean(df$steps, na.rm = TRUE))
+# Rename second column name
+colnames(mean.steps.per.day)[2] &lt;- &quot;steps&quot;
+# Return the 5-minute interval with the max number of steps across all the
+# averages
+activity[max(mean.steps.per.day$steps, na.rm = TRUE), ]$interval
 </code></pre>
 
-<pre><code>## Error: object &#39;mean.steps.per.day&#39; not found
+<pre><code>## [1] 600
 </code></pre>
 
 <p>Total number of missing values in the dataset</p>
