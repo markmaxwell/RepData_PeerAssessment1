@@ -264,7 +264,7 @@ activity[max(mean.steps.per.day$steps, na.rm = TRUE), ]$interval
 
 <h2>Imputing missing values</h2>
 
-<p>Fill in all of the missing values in the dataset with the mean number of steps that are take for the coresponding interval.</p>
+<p>Fill in all of the missing values in the dataset with the mean number of steps that are taken for the coresponding interval that had an NA.</p>
 
 <pre><code class="r"># Find the mean number of steps for each 5 minute interval
 mean.interval &lt;- ddply(activity, .(interval), function(df) median(df$steps, 

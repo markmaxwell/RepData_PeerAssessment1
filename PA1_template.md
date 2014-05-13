@@ -110,7 +110,7 @@ sum(is.na(activity))
 
 
 ## Imputing missing values
-Fill in all of the missing values in the dataset with the mean number of steps that are take for the coresponding interval.
+Fill in all of the missing values in the dataset with the mean number of steps that are taken for the coresponding interval that had an NA.
 
 ```r
 # Find the mean number of steps for each 5 minute interval
